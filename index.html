@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@yartscartel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0c;
+      --surface: #111114;
+      --surface2: #18181d;
+      --border: rgba(255,255,255,0.06);
+      --border2: rgba(255,255,255,0.1);
+      --ink: #edeae5;
+      --muted: #55525c;
+      --muted2: #888592;
+      --pink:   #ff5f95;
+      --purple: #9d74f5;
+      --cyan:   #1fcce0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px 22px 90px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* subtle ambient glows */
+    .glow-tl {
+      position: fixed; top: -180px; left: -180px;
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, rgba(157,116,245,0.11) 0%, transparent 68%);
+      pointer-events: none; z-index: 0;
+    }
+    .glow-br {
+      position: fixed; bottom: -140px; right: -140px;
+      width: 460px; height: 460px;
+      background: radial-gradient(circle, rgba(31,204,224,0.08) 0%, transparent 68%);
+      pointer-events: none; z-index: 0;
+    }
+    .glow-c {
+      position: fixed; top: 42%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px; height: 300px;
+      background: radial-gradient(ellipse, rgba(255,95,149,0.04) 0%, transparent 65%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 400px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    /* ── TikTok tip ── */
+    .tiktok-banner {
+      width: 100%;
+      margin-bottom: 44px;
+      animation: fadeDown 0.65s ease both;
+    }
+
+    .banner-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 99px;
+      padding: 3px 11px 3px 7px;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--muted2);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .banner-pill span { font-size: 11px; }
+
+    .banner-heading {
+      font-family: 'Instrument Serif', serif;
+      font-size: 17px; font-weight: 400;
+      color: #ddd8ea; line-height: 1.35;
+      margin-bottom: 18px;
+    }
+
+    .banner-steps {
+      padding-left: 22px;
+      border-left: 1px solid rgba(255,255,255,0.07);
+      margin-left: 3px;
+      display: flex; flex-direction: column; gap: 0;
+    }
+
+    .banner-step {
+      position: relative;
+      padding: 9px 0;
+    }
+    .banner-step:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.04); }
+
+    .banner-step::before {
+      content: '';
+      position: absolute;
+      left: -26px; top: 14px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--dc, var(--purple));
+      box-shadow: 0 0 10px var(--dc, var(--purple));
+    }
+    .banner-step:nth-child(1) { --dc: var(--pink); }
+    .banner-step:nth-child(2) { --dc: var(--purple); }
+    .banner-step:nth-child(3) { --dc: var(--cyan); }
+
+    .step-action {
+      font-size: 12.5px; color: #ccc8d8; line-height: 1.55;
+    }
+    .step-action em {
+      font-style: normal; color: #f0edf8; font-weight: 500;
+      background: rgba(255,255,255,0.07);
+      padding: 1px 7px; border-radius: 5px; font-size: 11.5px;
+    }
+    .step-note { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+
+    /* ── Profile ── */
+    .profile {
+      text-align: center;
+      margin-bottom: 46px;
+      animation: fadeDown 0.65s 0.08s ease both;
+    }
+
+    .avatar-ring {
+      width: 80px; height: 80px; border-radius: 50%;
+      padding: 2px;
+      background: conic-gradient(from 0deg, var(--pink), var(--purple), var(--cyan), var(--pink));
+      margin: 0 auto 15px;
+      animation: spinGlow 7s linear infinite;
+    }
+    @keyframes spinGlow {
+      to { filter: hue-rotate(360deg); }
+    }
+
+    .avatar-inner {
+      width: 100%; height: 100%; border-radius: 50%;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px;
+    }
+
+    .profile h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 26px; font-weight: 400; letter-spacing: -0.2px;
+      background: linear-gradient(135deg, #f0ede8 20%, #b8b0cc);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 4px;
+    }
+
+    .profile p {
+      font-size: 12.5px; color: var(--muted); font-weight: 300; letter-spacing: 0.2px;
+      margin-bottom: 14px;
+    }
+
+    .profile-name {
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .verified {
+      display: inline-flex; align-items: center;
+      vertical-align: middle; position: relative; top: -1px;
+      flex-shrink: 0;
+    }
+
+    .stats-row {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 2px;
+      animation: fadeUp 0.55s 0.25s ease both;
+    }
+
+    .stat {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; color: var(--muted); font-weight: 400;
+    }
+
+    .stat svg { opacity: 0.55; flex-shrink: 0; }
+
+    #vc {
+      color: var(--muted2); font-weight: 500;
+    }
+
+    .sdot { color: var(--muted); font-size: 13px; opacity: 0.4; }
+
+    /* ── Links ── */
+    .links {
+      width: 100%; display: flex; flex-direction: column; gap: 9px;
+    }
+
+    .link-card {
+      background: var(--surface);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 15px 18px;
+      text-decoration: none; color: var(--ink);
+      display: flex; align-items: center; gap: 13px;
+      transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      animation: fadeUp 0.55s ease both;
+      position: relative; overflow: hidden;
+    }
+
+    .link-card::before {
+      content: '';
+      position: absolute; left: 0; top: 22%; bottom: 22%;
+      width: 2.5px; border-radius: 0 2px 2px 0;
+      background: var(--ac, var(--purple));
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .link-card:hover::before { opacity: 1; }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 36px rgba(0,0,0,0.45);
+      border-color: rgba(255,255,255,0.09);
+      background: var(--surface2);
+    }
+    .link-card:active { transform: scale(0.977); }
+
+    .link-card:nth-child(1) { animation-delay: 0.18s; --ac: var(--pink); }
+    .link-card:nth-child(2) { animation-delay: 0.26s; --ac: var(--purple); }
+
+    /* emoji box */
+    .link-emoji-wrap {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+      transition: background 0.2s ease;
+      overflow: hidden;
+    }
+    .link-card:hover .link-emoji-wrap { background: rgba(255,255,255,0.05); }
+
+    .link-info { flex: 1; }
+    .link-title { font-size: 13.5px; font-weight: 500; margin-bottom: 1px; }
+    .link-sub   { font-size: 11px; color: var(--muted2); font-weight: 300; }
+
+    .link-arrow {
+      font-size: 13px; color: var(--muted);
+      transition: color 0.18s ease, transform 0.18s ease;
+    }
+    .link-card:hover .link-arrow { color: var(--muted2); transform: translateX(3px); }
+
+    /* ── Secret CTA card ── */
+    .link-card.secret {
+      border-color: rgba(255,95,149,0.18);
+      background: linear-gradient(135deg, rgba(255,95,149,0.05) 0%, rgba(157,116,245,0.05) 100%);
+    }
+
+    .link-card.secret:hover {
+      border-color: rgba(255,95,149,0.32);
+      box-shadow: 0 10px 40px rgba(255,95,149,0.1);
+      background: linear-gradient(135deg, rgba(255,95,149,0.09) 0%, rgba(157,116,245,0.09) 100%);
+    }
+
+    /* flicker glow on the secret card border */
+    @keyframes borderFlicker {
+      0%,100% { box-shadow: 0 0 0px rgba(255,95,149,0); border-color: rgba(255,95,149,0.18); }
+      50%      { box-shadow: 0 0 18px rgba(255,95,149,0.18); border-color: rgba(255,95,149,0.38); }
+    }
+
+    .link-card.secret {
+      animation: fadeUp 0.55s 0.26s ease both, borderFlicker 3s 1.2s ease-in-out infinite;
+    }
+
+    /* lock icon pulse */
+    .link-card.secret .link-emoji-wrap {
+      background: rgba(55,174,226,0.12);
+      border-color: rgba(55,174,226,0.25);
+      animation: iconPulse 3s 1.2s ease-in-out infinite;
+    }
+
+    @keyframes iconPulse {
+      0%,100% { box-shadow: none; }
+      50%      { box-shadow: 0 0 14px rgba(55,174,226,0.3); }
+    }
+
+    /* live dot badge */
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 9.5px; color: #4ade80; font-weight: 500;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .live-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #4ade80;
+      animation: livePulse 1.8s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    .link-card.secret .link-title {
+      background: linear-gradient(90deg, #f0ede8, #d4a8c4);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .link-card.secret .link-arrow {
+      color: rgba(255,95,149,0.5);
+    }
+    .link-card.secret:hover .link-arrow {
+      color: var(--pink); transform: translateX(3px);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 54px;
+      font-size: 11px; color: var(--muted); letter-spacing: 0.3px;
+      animation: fadeUp 0.5s 0.55s ease both;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+  <div class="glow-c"></div>
+
+  <div class="wrap">
+
+    <!-- TikTok tip -->
+    <div class="tiktok-banner">
+      <div class="banner-pill"><span>⚠️</span> TikTok users</div>
+      <div class="banner-heading">Links broken? Here's the fix.</div>
+      <div class="banner-steps">
+        <div class="banner-step">
+          <div class="step-action">Tap the <em>···</em> three dots, top right corner</div>
+        </div>
+        <div class="banner-step">
+          <div class="step-action">Select <em>Open in browser</em></div>
+        </div>
+        <div class="banner-step">
+          <div class="step-action">Done — everything works now ✓</div>
+          <div class="step-note">takes 2 seconds, works every time</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile -->
+    <div class="profile">
+      <div class="avatar-ring">
+        <div class="avatar-inner">🌙</div>
+      </div>
+      <h1 class="profile-name">@yartscartel <span class="verified"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622C17.176 19.29 21 14.591 21 9a12.02 12.02 0 00-.382-3.016z" stroke="url(#vg)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="vg" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs></svg></span></h1>
+      <p>Discreet. Fast. Reliable.</p>
+      <div class="stats-row">
+        <span class="stat"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> <span id="vc">1,302</span> views</span>
+        <span class="sdot">·</span>
+        <span class="stat"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg> 246 likes</span>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="links">
+
+      <a class="link-card secret" href="https://t.me/yartific" target="_blank" rel="noopener">
+        <div class="link-emoji-wrap">
+          <!-- Telegram logo SVG -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z" fill="url(#tg-grad)"/>
+            <path d="M5.491 11.74L18.51 6.601c.633-.23 1.187.155.98 1.115l-2.196 10.35c-.163.73-.594.908-1.206.565l-3.28-2.418-1.584 1.525c-.175.175-.322.322-.66.322l.236-3.336 6.08-5.493c.265-.234-.057-.364-.41-.13L7.478 14.49l-3.24-.999c-.705-.22-.72-.706.147-1.046l.003-.003" fill="white"/>
+            <defs>
+              <linearGradient id="tg-grad" x1="12" y1="0" x2="12" y2="24" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#37aee2"/>
+                <stop offset="100%" stop-color="#1e96c8"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="link-info">
+          <div class="link-title">Secret Website To Buy <span class="live-badge"><span class="live-dot"></span>live</span></div>
+          <div class="link-sub">tap to enter</div>
+        </div>
+        <span class="link-arrow">→</span>
+      </a>
+
+    </div>
+
+    <p class="footer">za ♡</p>
+  </div>
+  <script>
+    // slowly count up the views from 1289 to 1302 on load
+    const el = document.getElementById('vc');
+    const target = 1302;
+    const start = 1289;
+    let current = start;
+    setTimeout(() => {
+      const iv = setInterval(() => {
+        current++;
+        el.textContent = current.toLocaleString();
+        if (current >= target) clearInterval(iv);
+      }, 90);
+    }, 800);
+  </script>
+</body>
+</html>
